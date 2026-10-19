@@ -2,8 +2,6 @@ Shader "Unlit/OneGrassUnlitShader"
 {
 	Properties
 	{
-		// _MainTex("Texture", 2D) = "white" {}
-	  //   _Color("FixColor", Color) = (1, 1,1, 1)
 		 _RootPos("RootPos", Vector) = (0, 0, 0, 0)
 	}
 	SubShader
@@ -23,25 +21,20 @@ Shader "Unlit/OneGrassUnlitShader"
 		{
 			CGPROGRAM
 			// Upgrade NOTE: excluded shader from DX11; has structs without semantics (struct v2f members brightness)
-			//#pragma exclude_renderers d3d11
 			// Upgrade NOTE: excluded shader from DX11; has structs without semantics (struct v2f members brightness)
-						//#pragma exclude_renderers d3d11
 						#pragma vertex vert
 						#pragma fragment frag
 						// make fog work
-					  //  #pragma multi_compile_fog
 
 						#include "UnityCG.cginc"
 
 						uniform StructuredBuffer<float3> verticesBuffer;
-	//   uniform StructuredBuffer<float> brightnessBuffer;
 	   uniform StructuredBuffer<int> cullingBuffer;
 	   uniform StructuredBuffer<float4> colorBuffer;
 
 	   struct v2f
 	   {
 		   float2 uv : TEXCOORD0;
-		   // float brightness: FLOAT;//whyyy
 			float4 vertex : SV_POSITION;
 			float4 color: COLOR;
 		};
@@ -62,9 +55,7 @@ Shader "Unlit/OneGrassUnlitShader"
 				} 
 			  float3 pos = verticesBuffer[vid]+_RootPos;
 			 
-			//	o.vertex = (1-cullFactor)*fixed4(0, 0, 0, 1)+cullFactor*  UnityObjectToClipPos(pos);
 			  o.vertex =   UnityObjectToClipPos(pos  );
-			//   o.brightness = brightnessBuffer[vid];
 			  o.color = colorBuffer[vid];
 			  return o;
 		  }
@@ -73,15 +64,9 @@ Shader "Unlit/OneGrassUnlitShader"
 		  {
 			  // sample the texture
 
-			//  fixed4 col = fixed4(0 , 1,0,1)  *i.brightness *i.color ;
-			//  fixed4 col =  half4(i.color,1) * _MainTex_ST;
-			 // fixed4 col = half4(i.color,1) * _Color ;
 
 
 			 fixed4 col = i.color;
-		  //    fixed4 col = fixed4(0, 1, 0, 1);
-			// fixed4 col = fixed4(0, 0, 0, 0);
-		   //    col = col  * i.brightness;
 			 return col;
 		 }
 		 ENDCG

@@ -1,23 +1,16 @@
+// This file is generated using AI. Please ignore it.
 using System;
 using System.IO;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
-// Renders the README screenshots from a player build:
+// Renders the README screenshots from a player build, one per shot:
 //   StadiumGrassDemo.exe -capture <output folder>
 // Does nothing when the argument is absent.
 public class DemoCapture : MonoBehaviour
 {
-    [Serializable]
-    public struct Shot
-    {
-        public string name;
-        public Vector3 position;
-        public Vector3 lookAt;
-    }
-
     public GrassDemoBootstrap bootstrap;
-    public Shot[] shots;
+    public GrassDemoBootstrap.Viewpoint[] shots;
 
     async void Start()
     {
@@ -25,15 +18,13 @@ public class DemoCapture : MonoBehaviour
         if (folder == null) return;
 
         Directory.CreateDirectory(folder);
-        Transform cam = Camera.main.transform;
-        if (cam.TryGetComponent(out DemoFlyCamera fly)) fly.enabled = false;
+        bootstrap.showHud = false;
+        bootstrap.autoPlay = false;
 
         await UniTask.WaitUntil(() => bootstrap.IsReady);
-        foreach (Shot shot in shots)
+        foreach (GrassDemoBootstrap.Viewpoint shot in shots)
         {
-            cam.SetPositionAndRotation(shot.position, Quaternion.LookRotation(shot.lookAt - shot.position));
-            await UniTask.DelayFrame(3);
-            await UniTask.WaitUntil(() => !bootstrap.grassSystem.isRefreshingGrass);
+            await bootstrap.Show(shot);
             await UniTask.Delay(800);
             ScreenCapture.CaptureScreenshot(Path.Combine(folder, shot.name + ".png"));
             await UniTask.Delay(500);

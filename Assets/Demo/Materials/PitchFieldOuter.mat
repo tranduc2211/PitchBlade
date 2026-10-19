@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Unlit/Texture
-  m_Shader: {fileID: 10752, guid: 0000000000000000f000000000000000, type: 0}
+  m_Name: PitchFieldOuter
+  m_Shader: {fileID: 4800000, guid: ade7ba99087e4674aa6bfde73a1aebff, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -24,11 +24,23 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 8aa97145f912f004ba5fee3d22867e36, type: 3}
+        m_Texture: {fileID: 2800000, guid: 9ccb342baaa93ba4489d64746926d5b0, type: 3}
+        m_Scale: {x: 30, y: 60}
+        m_Offset: {x: 0, y: 0}
+    - _NoiseWhite:
+        m_Texture: {fileID: 2800000, guid: b0fdbdb532abf884b80187a841360d52, type: 3}
+        m_Scale: {x: 3, y: 3}
+        m_Offset: {x: 1.22, y: 0}
+    - _texcoord:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
-    m_Floats: []
-    m_Colors: []
+    m_Floats:
+    - _Brightness: 2.5
+    - __dirty: 1
+    m_Colors:
+    - _NoiseColor: {r: 0.566, g: 0.566, b: 0.566, a: 0}
+    - _TintColor: {r: 0.914, g: 0.925, b: 1, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

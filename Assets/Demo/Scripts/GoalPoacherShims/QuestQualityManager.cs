@@ -1,3 +1,4 @@
+// This file is generated using AI. Please ignore it.
 using UnityEngine;
 
 // Demo shim for Goal Poacher's per-device quality settings (Meta Quest vs PC).

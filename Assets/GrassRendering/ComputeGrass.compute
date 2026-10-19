@@ -12,13 +12,10 @@ int groupSizeVerticePos;
 [numthreads(16, 16, 1)]
 void CSVerticeUpdate(uint3 id : SV_DispatchThreadID)
 {
-    int grassIndex = id.y * 16 * groupSizeVerticePos + id.x; //x la truc z  , y la truc x   =))
+    int grassIndex = id.y * 16 * groupSizeVerticePos + id.x;
      
      
     
-   // _verticesBuffer[3 * grassIndex] = _verticesBuffer[3 * grassIndex] - currentRootPos + newRootPos;
-   // _verticesBuffer[3 * grassIndex + 1] = _verticesBuffer[3 * grassIndex + 1] - currentRootPos + newRootPos;
-   // _verticesBuffer[3 * grassIndex + 2] = _verticesBuffer[3 * grassIndex + 2] - currentRootPos + newRootPos;
     
     
 }
@@ -27,10 +24,9 @@ void CSVerticeUpdate(uint3 id : SV_DispatchThreadID)
 
 // Create a RenderTexture with enableRandomWrite flag and set it
 // with cs.SetTexture
-//RWTexture2D<float4> Result;
 float3 rootPos;
 float fieldLengthHalf;
-float3 cameraPos;//DividedByDistanceBetween2Grass;
+float3 cameraPos;
 float3 cameraForward;
 float3 cameraForwardLeft30;
 float3 cameraForwardRight30;
@@ -48,18 +44,14 @@ int numberOfGrassPerRowDividedByCameraResolution;
 [numthreads(16, 16, 1)]
 void CSColoring(uint3 id : SV_DispatchThreadID)
 {
-    int grassIndex = id.y * 16 * groupSizeColoring + id.x; //x la truc z  , y la truc x   =))
+    int grassIndex = id.y * 16 * groupSizeColoring + id.x;
      
     
- //   float2 RTCoord = (id.y * cameraResolutionDivideByNumberOfGrassPerRow, id.x * cameraResolutionDivideByNumberOfGrassPerRow);
     float4 color = grassRenderTexture[id.yx / numberOfGrassPerRowDividedByCameraResolution];
     
-    //note: neu khoang cach giua 2 grass blade lon (meta quest version) thi brightness value nho se gay grid effect). tren PC thi ok
     //PC
-    //float brightnessValue = lerp(0, 1, colorLerpBuffer[grassIndex]);
-    //float brightnessValue2 = lerp(0.8, 1, colorLerpBuffer[grassIndex]);
     //Meta Quest
-    float brightnessValue =1;// lerp(0.95, 1, colorLerpBuffer[grassIndex]);
+    float brightnessValue =1;
     float brightnessValue2 = lerp(3, 1, colorLerpBuffer[grassIndex]);
     
     float4 colorRoot = color * brightnessValue;
@@ -92,28 +84,24 @@ void CSCulling(uint3 id : SV_DispatchThreadID)
 {
      
     // TODO: insert actual code here!
-    int grassIndex = id.y * 16 * groupSize  + id.x ;//x la truc z  , y la truc x   =))
+    int grassIndex = id.y * 16 * groupSize  + id.x ;
     float3 bladePos = (0,0,0); 
     bladePos.x = id.y * distanceBetween2Grass + rootPos.x - fieldLengthHalf;
     bladePos.z = id.x * distanceBetween2Grass + rootPos.z - fieldLengthHalf;
     
     float3 viewDir = bladePos - cameraPos;
-   // viewDir = viewDir / (sqrt(viewDir.x * viewDir.x + viewDir.y * viewDir.y + viewDir.z * viewDir.z));
     int visible = step(0 ,cameraForward.x * viewDir.x + cameraForward.y * viewDir.y + cameraForward.z * viewDir.z );
     int visible2 = step(0, cameraForwardLeft30.x * viewDir.x + cameraForwardLeft30.y * viewDir.y + cameraForwardLeft30.z * viewDir.z);
    int visible3 = step(0, cameraForwardRight30.x * viewDir.x + cameraForwardRight30.y * viewDir.y + cameraForwardRight30.z * viewDir.z);
    
-   // int visible4 = step(-3, bladePos.z);//cutoff by z stadium
     
     
     visible = visible * visible2 * visible3;
     cullingBuffer[3 * grassIndex] = visible;
     cullingBuffer[3 * grassIndex + 1] = visible;
    cullingBuffer[3 * grassIndex + 2] = visible;
-   // Result[id.xy] = float4(id.x & id.y, (id.x & 15)/15.0, (id.y & 15)/15.0, 0.0);
 }
 
-//grass blade num 589824 = 768*768. Trong do 768 = 256*3
 
 //dispatch 48,48,1 numthread 16 16 1
 

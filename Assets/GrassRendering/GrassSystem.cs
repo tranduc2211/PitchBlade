@@ -16,19 +16,17 @@ public class GrassSystem : MonoBehaviour
     int coloringHandler;
     int groupSizeColoring;
     #endregion
-    public const int cameraGrassResolution = 384 ; //phai bang number of grass blade per row
+    public const int cameraGrassResolution = 1152 ;
     public Camera grassCamera;
     public Color wtfColor;
     Texture2D grassTexture;
     public RenderTexture grassRenderTexture;
     public int grassBladeCount;
     float distanceBetween2Blade;
-    public const int numberOfGrassBladePerRow = 384 ;//phai la boi so cua 16 va phai chia het camera grass resolution  
+    public const int numberOfGrassBladePerRow = 1152 ;
     public float grassFieldLength = 20;
     public float noiseMultiplier = 1;
     public float noiseRotateMultiplier = 1;
-    //public float noise2RotateMultiplier = 1;
-    //public float noiseColorMultiplier = 1;
     public Transform grassOne;
     public Transform point1;
     public Transform point2;
@@ -40,17 +38,13 @@ public class GrassSystem : MonoBehaviour
     float[] colorLerps;
     int[] culling;
     ComputeBuffer _verticesBuffer;
-    //ComputeBuffer _brightnessBuffer;
     ComputeBuffer _cullingBuffer;
     ComputeBuffer _colorBuffer;
     ComputeBuffer _colorLerpBuffer;
     public Material material;
     static readonly int verticesBuffer = Shader.PropertyToID("verticesBuffer");
- //   static readonly int brightnessBuffer = Shader.PropertyToID("brightnessBuffer");
     static readonly int cullingBuffer = Shader.PropertyToID("cullingBuffer");
     static readonly int colorBuffer = Shader.PropertyToID("colorBuffer");
-   // static readonly int colorLerpBuffer = Shader.PropertyToID("colorLerpBuffer");
-    //  public ComputeShader computeShader;
     // Start is called before the first frame update
     private void Awake()
     {
@@ -59,7 +53,6 @@ public class GrassSystem : MonoBehaviour
     void Start()
     {
         doneInit = false;
-         //Init();
     }
     private bool doneInit = false;
     public async UniTask Init()
@@ -89,7 +82,6 @@ public class GrassSystem : MonoBehaviour
         await RefreshGrassPosPrivate(grassPos);
 
 
-        //DispatchVertPosOffsetCompute(GlobalReference.cPlayer.transform.position);
         doneInit = true;
     }
     void InitCullingCompute()
@@ -120,8 +112,6 @@ public class GrassSystem : MonoBehaviour
 
         shader.SetInt("groupSizeColoring", groupSizeColoring);
         shader.SetInt("numberOfGrassPerRowDividedByCameraResolution", numberOfGrassBladePerRow/cameraGrassResolution);
-        //shader.SetInt("renderTextureResolution", cameraGrassResolution);
-     //   shader.SetInt("numberOfGrassBladePerRow", numberOfGrassBladePerRow);
         
         shader.SetTexture(coloringHandler, "grassRenderTexture", grassRenderTexture);
         shader.SetBuffer(coloringHandler, "colorBuffer", _colorBuffer);
@@ -134,12 +124,9 @@ public class GrassSystem : MonoBehaviour
         groupSizePositionOffset = numberOfGrassBladePerRow / 16;
         shader.SetBuffer(positionOffsetHandler, "_verticesBuffer", _verticesBuffer);
         shader.SetInt("groupSizePositionOffset", groupSizePositionOffset);
-       // shader.SetVector("currentRootPos", Vector3.zero);
     }
     void DispatchCullingCompute()
     {
-       // return;//skip dispatch to test dispatch performance
-        //  if (GlobalReference.cPlayer == null) return;
         Vector3 grassCamFlatPos = grassCamera.transform.position;
         grassCamFlatPos.y = 0;
         Transform playerEyeCam;
@@ -153,7 +140,6 @@ public class GrassSystem : MonoBehaviour
         shader.SetVector("cameraForward", playerEyeCam.forward );
         shader.SetVector("cameraForwardLeft30", Quaternion.Euler(0,-30,0)* playerEyeCam.forward );
         shader.SetVector("cameraForwardRight30", Quaternion.Euler(0,  30, 0) * playerEyeCam.forward );
-        //  groupSize = numberOfGrassBladePerRow / 16;
 
         shader.Dispatch(cullingHandler, groupSizeCulling, groupSizeCulling, 1);
     }
@@ -175,17 +161,13 @@ public class GrassSystem : MonoBehaviour
     }
     void InitBuffers()
     {
-        //numberOfGrassBladePerRow = Mathf.FloorToInt(Mathf.Sqrt(grassBladeCount));
         distanceBetween2Blade = grassFieldLength / numberOfGrassBladePerRow;
 
 
         vertices = new Vector3[3 * grassBladeCount];
         _verticesBuffer = new ComputeBuffer(3 * grassBladeCount, 3 * 4);
-     //   brightnesses = new float[3 * grassBladeCount];
-     //   _brightnessBuffer = new ComputeBuffer(3 * grassBladeCount, 1 * 4);
 
         bladePositions = new Vector3[grassBladeCount];
-     //   
        
 
         colors = new Vector4[grassBladeCount * 3];
@@ -198,50 +180,19 @@ public class GrassSystem : MonoBehaviour
  
         material.SetBuffer(colorBuffer, _colorBuffer);
 
-        //CopyFromCpuToGpu();
     }
     
     public Vector3 GetGrassRootPosition(int grassBladeIndex)
     {
-        //numberOfGrassBladePerRow = Mathf.FloorToInt(Mathf.Sqrt(grassBladeCount));
-      //  distanceBetween2Blade = grassFieldLength / numberOfGrassBladePerRow;
         int indexWidth = Mathf.FloorToInt(grassBladeIndex * 1.0f / numberOfGrassBladePerRow);
         int indexHeight = grassBladeIndex % numberOfGrassBladePerRow;
         Vector3 pos;
         pos.x = indexWidth * distanceBetween2Blade - grassFieldLength / 2;
         pos.z = indexHeight * distanceBetween2Blade - grassFieldLength / 2;
         pos.y = 0;
-        return pos;//  + grassCamera.transform.position.z*Vector3.forward + grassCamera.transform.position.x * Vector3.right;
+        return pos;
     }
 
-#if UNITY_EDITOR
-    //[ContextMenu("BakeGrassTexture")]
-    //public void BakeDataOfGrassTexture()
-    //{
-    //    return;
-    //    numberOfGrassBladePerRow = Mathf.FloorToInt(Mathf.Sqrt(grassBladeCount));
-    //    distanceBetween2Blade = grassFieldLength / numberOfGrassBladePerRow;
-    //    colors = new List<Vector4>();
-    //    for (int i = 0; i < grassBladeCount; i++)
-    //    {
-    //       //  Vector3 rootPosOfBlade = GetGrassRootPosition(i);
-    //       // bladePositions[i] = rootPosOfBlade;
-    //        float textureRes = 1024;
-    //        int indexWidth = Mathf.FloorToInt(i * 1.0f / numberOfGrassBladePerRow);
-    //        int indexHeight = i % numberOfGrassBladePerRow;
-    //        int indexOnPixelWidth = Mathf.FloorToInt(indexWidth * 1.0f / numberOfGrassBladePerRow * textureRes);
-    //        int indexOnPixelHeight = Mathf.FloorToInt(indexHeight * 1.0f / numberOfGrassBladePerRow * textureRes);
-    //        Color color = grassTexture.GetPixel(indexOnPixelWidth , indexOnPixelHeight);
-    //        color.r = Mathf.Pow(color.r, 2.2f);
-    //        color.g = Mathf.Pow(color.g, 2.2f);
-    //        color.b = Mathf.Pow(color.b, 2.2f);
-    //        colors.Add(color);
-    //        colors.Add(color);
-    //        colors.Add(color);
-    //    }
-    //    EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
-    //}
-#endif
     public bool isRefreshingGrass = false;
     private Vector3 lastPositionFlat = Vector3.zero;
     public async UniTask RefreshGrassPosition(Vector3 position)
@@ -305,13 +256,8 @@ public class GrassSystem : MonoBehaviour
             int indexOnPixelWidth = Mathf.FloorToInt(indexWidth * 1.0f / numberOfGrassBladePerRow * cameraGrassResolution);
             int indexOnPixelHeight = Mathf.FloorToInt(indexHeight * 1.0f / numberOfGrassBladePerRow * cameraGrassResolution);
 
-         //   Color color = grassTexture.GetPixel(indexOnPixelWidth, indexOnPixelHeight);
 
-          //  float noise = color.g;
-           // noise = Mathf.Clamp01(noise);
               float noise  = Mathf.PerlinNoise(rootPosOfBlade.z, rootPosOfBlade.x) ;
-            // float noise2 = noiseLite.GetNoise(rootPosOfBlade.x, rootPosOfBlade.z) * noise2RotateMultiplier;
-            ////rotate that shit
             grassOne.transform.eulerAngles = Vector3.up * 360 * noise * noiseRotateMultiplier;
 
             vertices[i * 3] = point1.position + rootPosOfBlade;
@@ -331,9 +277,7 @@ public class GrassSystem : MonoBehaviour
 
             vertices[i * 3 + 2] = point3.position + rootPosOfBlade + grassOne.forward * noiseForward + grassOne.right * (noise - 0.5f) * noiseMultiplier;
 
-            //float lerpValueForLength = sqrDistanceToCenter / (grassFieldLength * 3f / 6 * grassFieldLength * 3f / 6);
             float lengthValueMul = 1 - lerpValue;
-          //  lengthValueMul += 0.65f;
             lengthValueMul = Mathf.Clamp01(lengthValueMul);
 
             Vector3 dirFromRootToVer3 = vertices[i * 3 + 2] - rootPosOfBlade;
@@ -343,7 +287,6 @@ public class GrassSystem : MonoBehaviour
         }
         _verticesBuffer.SetData(vertices, 0, 0, vertices.Length);
 
-       // DispatchVertPosOffsetCompute(grassCamera.transform.position);
     }
     void InitColorLerpValueToGPU()
     {
@@ -371,43 +314,14 @@ public class GrassSystem : MonoBehaviour
        
      
         _colorLerpBuffer.SetData(colorLerps, 0, 0, colorLerps.Length);
-        //     _verticesBuffer.Release();
 
     }
 
-    //void UpdateCullingData()
-    //{
-    //    Vector3 forwardCam = Camera.main.transform.forward;
-    //    Vector3 camPOs = Camera.main.transform.position;
-    //    // Vector2 forwardCam2d = Vector2.right * forwardCam.x + Vector2.up * forwardCam.z;
-    //    for (int i = 0; i < grassBladeCount; i++)
-    //    {
-    //        Vector3 positionBlade = bladePositions[i];
-    //        Vector3 bladeDir = positionBlade - camPOs;
-    //        int visible = 0;
-    //        if (Vector3.Dot(bladeDir, forwardCam) < 0)
-    //        {
-    //            visible = 0;
-    //        }
-    //        else
-    //        {
-    //            visible = 1;
-    //        }
-
-    //        culling[3 * i] = visible;
-    //        culling[3 * i + 1] = visible;
-    //        culling[3 * i + 2] = visible;
-
-    //    }
-    //   // _cullingBuffer.SetData(culling, 0, 0, culling.Length);
-    //}
     private void OnDestroy()
     {
         if (_verticesBuffer != null)
             _verticesBuffer.Release();
 
-        //if (_brightnessBuffer != null)
-      //      _brightnessBuffer.Release();
        if (_cullingBuffer != null)
              _cullingBuffer.Release();
         if (_colorBuffer != null)
@@ -426,7 +340,6 @@ public class GrassSystem : MonoBehaviour
             Graphics.DrawProceduralNow(MeshTopology.Triangles, 3 * grassBladeCount, 1);
         }
         
-        //        DispatchCullingCompute();
 #endif
     }
     // Update is called once per frame
@@ -446,10 +359,7 @@ public class GrassSystem : MonoBehaviour
             bound.center = GlobalReference.cPlayer.playerHead.transform.position;
         else bound.center = Camera.main.transform.position;
         bound.size = Vector3.one * 50;
-        // if (EyeFader.instance.IsFading()) return;
         //set pass 0 already set the buffers on GPU
-        //   material.SetPass(0);
-        //    Graphics.DrawProceduralNow(MeshTopology.Triangles, 3 * grassBladeCount, 1);
         if (doneInit)
         {
             DispatchCullingCompute();
@@ -459,8 +369,6 @@ public class GrassSystem : MonoBehaviour
 #if !UNITY_EDITOR
         if (doneInit && isRefreshingGrass == false)
         {
-            //    hehe++;
-            //    if(hehe%2==0)
             if (QuestQualityManager.instance==null||QuestQualityManager.instance.isTrailerCinematic==false)
             {
                 Camera camera;
@@ -474,8 +382,6 @@ public class GrassSystem : MonoBehaviour
     
       
 #endif
-//
-        //  UpdateCullingData();
     }
 
     int hehe;
