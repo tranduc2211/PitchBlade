@@ -16,19 +16,17 @@ On Quest the patch has **147,456 blades** (384 × 384). This PC demo pushes it t
 > [`OneGrassUnlitShader.shader`](Assets/GrassRendering/OneGrassUnlitShader.shader).
 > Everything else in the repository is the demo built around them.
 
-![Grass level](docs/screenshots/grass_level.png)
+![The ball on the penalty spot](docs/screenshots/ball.png)
 
-| The ball on the penalty spot | Close up |
+| Close up | Line markings become white blades |
 |---|---|
-| ![Ball](docs/screenshots/ball.png) | ![Close up](docs/screenshots/close_up.png) |
+| ![Close up](docs/screenshots/close_up.png) | ![Six-yard box](docs/screenshots/six_yard_box.png) |
 
-| Line markings become white blades | Penalty box |
+| Penalty box | Penalty arc |
 |---|---|
-| ![Six-yard box](docs/screenshots/six_yard_box.png) | ![Penalty box](docs/screenshots/penalty_box.png) |
+| ![Penalty box](docs/screenshots/penalty_box.png) | ![Penalty arc](docs/screenshots/penalty_arc.png) |
 
-| Penalty arc | Corner |
-|---|---|
-| ![Penalty arc](docs/screenshots/penalty_arc.png) | ![Corner](docs/screenshots/corner.png) |
+![Corner](docs/screenshots/corner.png)
 
 ## The code
 
@@ -115,7 +113,7 @@ Everything in [`Assets/Demo`](Assets/Demo) is scaffolding for this repository, n
 - [UniTask](https://github.com/Cysharp/UniTask) is pulled in by Package Manager (git URL in `Packages/manifest.json`).
 - Open `Assets/Demo/Scenes/StadiumGrassDemo.unity` and press Play.
 
-The camera loops through four viewpoints, a few seconds each. Left / Right (or Space, or 1–4) switch views,
+The camera loops through three viewpoints, a few seconds each. Left / Right (or Space, or 1–3) switch views,
 and P turns the loop on and off. Each switch fades to black, moves the camera, rebuilds the grass patch in
 front of it and fades back in.
 

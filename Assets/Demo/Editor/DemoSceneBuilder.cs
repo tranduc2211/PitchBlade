@@ -234,15 +234,14 @@ public static class DemoSceneBuilder
         var ball = new GrassDemoBootstrap.Viewpoint { name = "ball", position = BallPosition + new Vector3(-0.9f, 0.35f, -1.1f), lookAt = BallPosition };
         var closeUp = new GrassDemoBootstrap.Viewpoint { name = "close_up", position = FromGoalLine(4.5f, 0.32f, 14f), lookAt = FromGoalLine(6.5f, 0f, 11f) };
         var sixYardBox = new GrassDemoBootstrap.Viewpoint { name = "six_yard_box", position = FromGoalLine(-11.2f, 0.75f, 8.3f), lookAt = FromGoalLine(-9.16f, 0f, 5.5f) };
-        var grassLevel = new GrassDemoBootstrap.Viewpoint { name = "grass_level", position = FromGoalLine(-3.5f, 0.09f, 9.5f), lookAt = FromGoalLine(-1.5f, 0.06f, 5.5f) };
         var penaltyArc = new GrassDemoBootstrap.Viewpoint { name = "penalty_arc", position = FromGoalLine(-5.5f, 1.1f, 23f), lookAt = FromGoalLine(0f, 0f, 17.5f) };
         var corner = new GrassDemoBootstrap.Viewpoint { name = "corner", position = FromGoalLine(HalfPitchWidth - 3.5f, 1.2f, 4f), lookAt = FromGoalLine(HalfPitchWidth, 0f, 0f) };
 
         // The demo loops through the close views; the README screenshots add a few wider ones.
-        bootstrap.viewpoints = new[] { ball, closeUp, sixYardBox, grassLevel };
+        bootstrap.viewpoints = new[] { ball, closeUp, sixYardBox };
         var capture = demo.AddComponent<DemoCapture>();
         capture.bootstrap = bootstrap;
-        capture.shots = new[] { grassLevel, ball, closeUp, sixYardBox, penaltyBox, penaltyArc, corner };
+        capture.shots = new[] { ball, closeUp, sixYardBox, penaltyBox, penaltyArc, corner };
 
         // Blades are ~1 cm wide; without MSAA they shimmer badly.
         int currentLevel = QualitySettings.GetQualityLevel();
@@ -621,6 +620,7 @@ public static class DemoSceneBuilder
         if (existing != null)
         {
             EditorUtility.CopySerialized(mat, existing);
+            existing.name = name;
             return existing;
         }
         mat.name = name;
