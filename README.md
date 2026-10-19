@@ -123,3 +123,7 @@ In the Editor the grass is drawn from `OnRenderObject`; in a player build it is 
 `Tools > Stadium Grass Demo > Rebuild Everything` rebuilds the scene from code
 ([`DemoSceneBuilder.cs`](Assets/Demo/Editor/DemoSceneBuilder.cs)). The screenshots above come from a player
 build run with `StadiumGrassDemo.exe -capture <folder>`.
+
+## License
+
+[MIT](LICENSE) © 2024 Tran Dang Duc
